@@ -1,0 +1,145 @@
+name: Version Bump
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prepatch
+          - preminor
+          - premajor
+          - prerelease
+      prerelease_type:
+        description: 'Prerelease identifier (alpha, beta, rc)'
+        required: false
+        type: string
+        default: 'beta'
+
+jobs:
+  bump-version:
+    name: Bump Version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version
+        id: bump
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(grep -m1 'version = ' pyproject.toml | cut -d'"' -f2)
+          echo "Current version: $CURRENT_VERSION"
+
+          # Bump version using uv
+          BUMP_TYPE="${{ inputs.version }}"
+
+          case "$BUMP_TYPE" in
+            patch|minor|major)
+              uv version --bump $BUMP_TYPE
+              ;;
+            prepatch|preminor|premajor|prerelease)
+              # uv version --bump supports prerelease in newer versions
+              # For now, fall back to patch bump with warning
+              echo "Warning: Pre-release versions support depends on uv version"
+              echo "Attempting: uv version --bump $BUMP_TYPE"
+              uv version --bump $BUMP_TYPE || {
+                echo "Pre-release bump not supported, falling back to patch"
+                uv version --bump patch
+              }
+              ;;
+            *)
+              echo "Error: Invalid bump type: $BUMP_TYPE"
+              exit 1
+              ;;
+          esac
+
+          # Get new version after bump
+          NEW_VERSION=$(grep -m1 'version = ' pyproject.toml | cut -d'"' -f2)
+          echo "New version: $NEW_VERSION"
+
+          # Export for later steps
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update CHANGELOG.md
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          NEW_VERSION="${{ steps.bump.outputs.new_version }}"
+
+          # Create new version entry in CHANGELOG
+          sed -i "s/## \[Unreleased\]/## [Unreleased]\n\n### Changed\n- Version bump to $NEW_VERSION\n\n## [$NEW_VERSION] - $DATE/" CHANGELOG.md
+
+      - name: Commit changes
+        run: |
+          git add pyproject.toml ml_api/__init__.py CHANGELOG.md
+          git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version }}"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: bump version to ${{ steps.bump.outputs.new_version }}"
+          title: "chore: bump version to ${{ steps.bump.outputs.new_version }}"
+          body: |
+            ## Version Bump: ${{ steps.bump.outputs.current_version }} → ${{ steps.bump.outputs.new_version }}
+
+            This PR bumps the version from `${{ steps.bump.outputs.current_version }}` to `${{ steps.bump.outputs.new_version }}`.
+
+            ### Changes
+            - Updated `pyproject.toml`
+            - Updated `ml_api/__init__.py`
+            - Updated `CHANGELOG.md`
+
+            ### Next Steps
+            1. Review and merge this PR
+            2. Create a new release with tag `v${{ steps.bump.outputs.new_version }}`
+            3. The publish workflow will automatically publish to PyPI
+
+            ### Release Checklist
+            - [ ] Review CHANGELOG.md entries
+            - [ ] Verify all tests pass
+            - [ ] Merge this PR
+            - [ ] Create GitHub release with tag `v${{ steps.bump.outputs.new_version }}`
+            - [ ] Verify PyPI publication
+          branch: version-bump-${{ steps.bump.outputs.new_version }}
+          delete-branch: true
+          labels: |
+            version-bump
+            automated
+
+      - name: Summary
+        run: |
+          echo "### Version Bump Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Previous Version**: ${{ steps.bump.outputs.current_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **New Version**: ${{ steps.bump.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Bump Type**: ${{ inputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "A pull request has been created for this version bump." >> $GITHUB_STEP_SUMMARY
