@@ -84,8 +84,8 @@ jobs:
 
       - name: Test CLI installation
         run: |
-          uv run ml-router --help
-          uv run ml-router serve --help
+          uv run ml-api --help
+          uv run ml-api serve --help
 
   # ===========================================================================
   # Build & Publish to PyPI

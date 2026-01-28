@@ -12,7 +12,7 @@ def test_healthz():
     response = client.get("/healthz")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
-    assert response.json()["service"] == "ml-router"
+    assert response.json()["service"] == "ml-api"
 
 
 def test_app_version():

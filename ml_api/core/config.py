@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     )
 
     # Application
-    app_name: str = "ml-router"
+    app_name: str = "ml-api"
     app_version: str = "0.1.0"
     environment: Literal["development", "staging", "production"] = "development"
     log_level: str = "INFO"

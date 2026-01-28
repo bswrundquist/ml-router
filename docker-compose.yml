@@ -51,7 +51,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: ml-router serve --host 0.0.0.0 --port 8000 --reload
+    command: ml-api serve --host 0.0.0.0 --port 8000 --reload
 
   worker:
     build:

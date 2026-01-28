@@ -1,1 +1,1 @@
-"""Scripts package for ml-router."""
+"""Scripts package for ml-api."""

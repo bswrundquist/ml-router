@@ -124,7 +124,7 @@ test: ## Run tests with coverage
 
 dev: ## Run development server
 	@echo "$(CYAN)Starting development server...$(NC)"
-	uv run ml-router serve --reload --port 8000
+	uv run ml-api serve --reload --port 8000
 
 worker: ## Run background worker
 	@echo "$(CYAN)Starting background worker...$(NC)"
@@ -174,12 +174,12 @@ clean: ## Clean build artifacts and cache
 
 docker-build: ## Build Docker image
 	@echo "$(CYAN)Building Docker image...$(NC)"
-	docker build -t ml-router:latest .
+	docker build -t ml-api:latest .
 	@echo "$(GREEN)✓ Docker image built$(NC)"
 
 docker-run: ## Run Docker container
 	@echo "$(CYAN)Running Docker container...$(NC)"
-	docker run -p 8000:8000 --env-file .env ml-router:latest
+	docker run -p 8000:8000 --env-file .env ml-api:latest
 
 # =============================================================================
 # Release
@@ -284,7 +284,7 @@ publish-test: build ## Publish to TestPyPI
 	uv publish --publish-url https://test.pypi.org/legacy/
 	@echo "$(GREEN)✓ Published to TestPyPI$(NC)"
 	@echo "$(YELLOW)Test installation:$(NC)"
-	@echo "pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ ml-router"
+	@echo "pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ ml-api"
 
 publish: build ## Publish to PyPI (manual - normally done via GitHub Actions)
 	@echo "$(RED)Warning: This will publish to PyPI!$(NC)"
@@ -302,7 +302,7 @@ publish: build ## Publish to PyPI (manual - normally done via GitHub Actions)
 
 info: ## Show project information
 	@echo "$(CYAN)Project Information$(NC)"
-	@echo "$(YELLOW)Name:$(NC)         ml-router"
+	@echo "$(YELLOW)Name:$(NC)         ml-api"
 	@echo "$(YELLOW)Version:$(NC)      $(VERSION)"
 	@echo "$(YELLOW)Python:$(NC)       $$(python --version 2>&1)"
 	@echo "$(YELLOW)UV:$(NC)           $$(uv --version 2>&1)"

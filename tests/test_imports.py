@@ -13,7 +13,7 @@ def test_import_config():
     from ml_api.core.config import settings
 
     assert settings is not None
-    assert settings.app_name == "ml-router"
+    assert settings.app_name == "ml-api"
 
 
 def test_import_cli():

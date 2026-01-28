@@ -45,7 +45,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Clone repository
 git clone <repo-url>
-cd ml-router
+cd ml-api
 
 # Install dependencies (recommended)
 make sync
@@ -96,10 +96,10 @@ uv run --with alembic alembic upgrade head
 make dev
 
 # Or manually
-uv run ml-router serve --reload --port 8000
+uv run ml-api serve --reload --port 8000
 
 # Production
-uv run ml-router serve --workers 4 --port 8000
+uv run ml-api serve --workers 4 --port 8000
 ```
 
 ### Start Background Worker
@@ -284,17 +284,17 @@ curl -X POST http://localhost:8000/v1/importance \
 
 ## CLI Usage
 
-The `ml-router` CLI provides comprehensive server configuration:
+The `ml-api` CLI provides comprehensive server configuration:
 
 ```bash
 # Development
-uv run ml-router serve --reload --log-level debug
+uv run ml-api serve --reload --log-level debug
 
 # Production
-uv run ml-router serve --host 0.0.0.0 --port 8000 --workers 4
+uv run ml-api serve --host 0.0.0.0 --port 8000 --workers 4
 
 # With SSL
-uv run ml-router serve \
+uv run ml-api serve \
   --host 0.0.0.0 \
   --port 8443 \
   --workers 4 \
@@ -302,7 +302,7 @@ uv run ml-router serve \
   --ssl-certfile /path/to/cert.pem
 
 # With proxy headers (for reverse proxy)
-uv run ml-router serve \
+uv run ml-api serve \
   --host 0.0.0.0 \
   --port 8000 \
   --workers 4 \
@@ -310,7 +310,7 @@ uv run ml-router serve \
   --forwarded-allow-ips="127.0.0.1,10.0.0.0/8"
 
 # See all options
-uv run ml-router serve --help
+uv run ml-api serve --help
 ```
 
 ### CLI Options
@@ -537,7 +537,7 @@ make sync
 ## Project Structure
 
 ```
-ml-router/
+ml-api/
 ├── app/                    # Main application code
 │   ├── api/               # FastAPI routes
 │   │   └── v1/           # API v1 endpoints
@@ -583,5 +583,5 @@ MIT
 ## Support
 
 For issues, questions, or contributions:
-- Create an issue: https://github.com/username/ml-router/issues
-- Check CI/CD: https://github.com/username/ml-router/actions
+- Create an issue: https://github.com/username/ml-api/issues
+- Check CI/CD: https://github.com/username/ml-api/actions

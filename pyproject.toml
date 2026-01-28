@@ -1,5 +1,5 @@
 [project]
-name = "ml-router"
+name = "bswr-ml-api"
 version = "0.1.0"
 description = "Production-grade ML API service with Polars, FastAPI, and GCS"
 readme = "README.md"
@@ -83,11 +83,11 @@ dev = [
 ]
 
 all = [
-    "ml-router[ml,dev]",
+    "bswr-ml-api[ml,dev]",
 ]
 
 [project.scripts]
-ml-router = "ml_api.cli.main:app"
+ml-api = "ml_api.cli.main:app"
 
 [build-system]
 requires = ["hatchling"]

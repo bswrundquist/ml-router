@@ -5,8 +5,8 @@ from typing import Optional
 import uvicorn
 
 app = typer.Typer(
-    name="ml-router",
-    help="ML Router Command Line Interface",
+    name="ml-api",
+    help="ML API Command Line Interface",
     add_completion=False,
 )
 
@@ -42,19 +42,19 @@ def serve(
     ),
 ):
     """
-    Start the ML Router server with uvicorn.
+    Start the ML API server with uvicorn.
 
     Examples:
 
-        ml-router serve --workers 4 --port 8000
+        ml-api serve --workers 4 --port 8000
 
-        ml-router serve --reload --log-level debug
+        ml-api serve --reload --log-level debug
 
-        ml-router serve --workers 4 --proxy-headers --forwarded-allow-ips="127.0.0.1,10.0.0.0/8"
+        ml-api serve --workers 4 --proxy-headers --forwarded-allow-ips="127.0.0.1,10.0.0.0/8"
 
-        ml-router serve --ssl-keyfile key.pem --ssl-certfile cert.pem
+        ml-api serve --ssl-keyfile key.pem --ssl-certfile cert.pem
     """
-    typer.echo(f"Starting ML Router server on {host}:{port} with {workers} worker(s)...")
+    typer.echo(f"Starting ML API server on {host}:{port} with {workers} worker(s)...")
 
     uvicorn_config = {
         "app": "app.main:app",
@@ -101,7 +101,7 @@ def version():
     """Show version information."""
     from ml_api.core.config import settings
 
-    typer.echo(f"ML Router version {settings.app_version}")
+    typer.echo(f"ML API version {settings.app_version}")
     typer.echo(f"Environment: {settings.environment}")
 
 

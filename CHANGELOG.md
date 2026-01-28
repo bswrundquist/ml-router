@@ -78,5 +78,5 @@ This is the initial beta release of the ML API service. It provides a solid foun
 - 🔜 Complete CLI tools
 - 🔜 Background job workers
 
-[Unreleased]: https://github.com/yourusername/ml-router/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/yourusername/ml-router/releases/tag/v0.1.0
+[Unreleased]: https://github.com/yourusername/ml-api/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/yourusername/ml-api/releases/tag/v0.1.0
